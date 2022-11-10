@@ -268,6 +268,8 @@ void setup()
   pinMode(stop_btn, INPUT);
   pinMode(ultrasonic_btn, INPUT);
   pinMode(center_btn, INPUT);
+  pinMode(light_f, INPUT);
+  pinMode(light_b, INPUT);
   pinMode(stop_btn, INPUT_PULLUP);  
   pinMode(ultrasonic_btn, INPUT_PULLUP);
   pinMode(center_btn, INPUT_PULLUP);
