@@ -5,6 +5,8 @@
 #define center_btn 11 //center
 #define ultrasonic_btn 12 //r2
 #define stop_btn 10 //r
+#define light_f 4
+#define light_b 5
 #define ledpin 13
 #define AxeXZero 508
 #define AxeYZero 558
@@ -141,12 +143,21 @@ void send_data()
 }
 void get_button()
 {
-  uint8_t stop_btn_press = digitalRead(stop_btn);
-  uint8_t ultrasonic_btn_press = digitalRead(ultrasonic_btn);
-  uint8_t center_btn_press = digitalRead(center_btn);
+  static uint8_t stop_btn_press = 0;
+  static uint8_t ultrasonic_btn_press = 0;
+  static uint8_t center_btn_press = 0;
+  static uint8_t light_f_press = 0;
+  static uint8_t light_b_press = 0;
+  stop_btn_press = digitalRead(stop_btn);
+  ultrasonic_btn_press = digitalRead(ultrasonic_btn);
+  center_btn_press = digitalRead(center_btn);
+  light_f_press = digitalRead(light_f);
+  light_b_press = digitalRead(light_b);
   static uint8_t stop_btn_trig = 0;
   static uint8_t ultrasonic_btn_trig = 0;
   static uint8_t center_btn_trig = 0;
+  static uint8_t light_f_trig = 0;
+  static uint8_t light_b_trig = 0;
   if (!stop_btn_press && stop_btn_trig == 0)
   {
     digitalWrite(ledpin, 1);
@@ -203,20 +214,10 @@ void get_button()
     center_btn_press = digitalRead(center_btn);
     if (!center_btn_press)
     {
-      if ((analogRead(pin_Y) - AxeYZero) > 100)
-      {
-        forw_led_sv = !forw_led_sv;
-        if (forw_led_sv) Serial.print("E5dFlOn_====");
-        else Serial.print("E5dFlOf_====");
-        center_btn_trig = 1;
-      }
-      else if ((analogRead(pin_Y) - AxeYZero) < -100)
-      {
-        back_led_sv = !back_led_sv;
-        if (back_led_sv) Serial.print("E5dBlOn_====");
-        else Serial.print("E5dBlOf_====");
-        center_btn_trig = 1;
-      }
+      forw_led_sv = !forw_led_sv;
+      if (forw_led_sv) Serial.print("E5dCnOn_====");
+      else Serial.print("E5dCnOf_====");
+      center_btn_trig = 1;
       delay(50);
       /*while (!center_btn_press)
       {
@@ -226,6 +227,36 @@ void get_button()
     }
   }
   else if (center_btn_press) center_btn_trig = 0;
+  
+  if (!light_f_press && light_f_trig == 0)
+  {
+    delay(250);
+    light_f_press = digitalRead(light_f);
+    if (!light_f_press)
+    {
+      forw_led_sv = !forw_led_sv;
+      if (forw_led_sv) Serial.print("E5dFlOn_====");
+      else Serial.print("E5dFlOf_====");
+      light_f_trig = 1;
+      delay(50);
+    }
+  }
+  else if (light_f_press) light_f_trig = 0;
+
+  if (!light_b_press && light_b_trig == 0)
+  {
+    delay(250);
+    light_b_press = digitalRead(light_b);
+    if (!light_b_press)
+    {
+      back_led_sv = !back_led_sv;
+      if (back_led_sv) Serial.print("E5dBlOn_====");
+      else Serial.print("E5dBlOf_====");
+      light_b_trig = 1;
+      delay(50);
+    }
+  }
+  else if (light_b_press) light_b_trig = 0;
 }
 
 void setup()
